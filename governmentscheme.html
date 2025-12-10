@@ -1,0 +1,308 @@
+<html>
+<head>
+       <title>🇮🇳 Indian Government Schemes Hub</title>
+
+    <style>
+        /* --- Global Styles & Variables --- */
+        :root {
+            --primary-color: #004d99; /* Deep Blue */
+            --secondary-color: #f7b300; /* Saffron/Yellow Accent */
+            --background-light: #f4f7f9;
+            --text-dark: #333;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* --- Header & Footer --- */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        header h1 {
+            margin-bottom: 5px;
+            font-size: 2.5em;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            margin-top: 40px;
+            background-color: var(--text-dark);
+            color: white;
+            font-size: 0.85em;
+        }
+
+        /* --- Main Content Layout --- */
+        main {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .results-container h2 {
+            border-bottom: 3px solid var(--secondary-color);
+            padding-bottom: 10px;
+            margin-top: 40px;
+            color: var(--primary-color);
+        }
+
+        /* --- Search Bar Section --- */
+        .search-container {
+            display: flex;
+            gap: 15px;
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        #scheme-search {
+            flex-grow: 1;
+            padding: 14px 18px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1.1em;
+            transition: border-color 0.3s;
+        }
+
+        #scheme-search:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        /* --- Scheme Card Display (Grid) --- */
+        .scheme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .scheme-card {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-top: 6px solid var(--primary-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .scheme-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .scheme-card h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+            font-size: 1.4em;
+            min-height: 40px;
+        }
+
+        .scheme-card .ministry {
+            font-weight: 600;
+            color: #666;
+            margin: 8px 0;
+            font-size: 0.95em;
+        }
+
+        .scheme-card .aim-summary {
+            font-size: 1em;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        /* --- Link Styling --- */
+        .details-link {
+            display: inline-block;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+            padding: 8px 15px;
+            border: 1px solid var(--primary-color);
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+            margin-top: auto;
+        }
+         
+        .details-link:visited {
+            color: #6a0dad; 
+                  
+            border-color: #6a0dad; 
+        }
+
+        .details-link:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* --- Utility Class --- */
+        .hidden {
+            display: none;
+        }
+
+        /* --- Responsive Adjustments (Mobile) --- */
+        @media (max-width: 650px) {
+            main {
+                padding: 0 10px;
+            }
+            header h1 {
+                font-size: 1.8em;
+            }
+            .search-container {
+                padding: 15px;
+                flex-direction: column;
+            }
+            .scheme-grid {
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Indian Government Schemes Hub</h1>
+        <p>Your single-point access to Central Government welfare and development programs.</p>
+    </header>
+
+    <main>
+        <section class="search-container">
+            <input type="text" id="scheme-search" oninput="performSearch()"
+                   placeholder="Search by scheme name, ministry, or aim (e.g., 'Health', 'Kisan', 'Housing')...">
+        </section>
+
+        <section class="results-container">
+            <h2>Scheme Results (Total: <span id="scheme-count">0</span>)</h2>
+            
+            <p id="loading-message"> </p>
+
+            <div id="scheme-list" class="scheme-grid">
+            </div>
+            
+            <p id="no-results" class="hidden">No schemes found matching your search criteria.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Scheme Collector Project | Data sourced from reliable government portals.</p>
+    </footer>
+
+    <script>
+        // --- 1. Scheme Data (Your Database Array) ---
+        // IMPORTANT: Add all your collected schemes into this array.
+        const allSchemes = [
+            {
+                "name": "Pradhan Mantri Jan Dhan Yojana (PMJDY)",
+                "ministry": "Ministry of Finance",
+                "aim": "Financial inclusion, ensuring access to financial services.",
+                "link": "https://pmjdy.gov.in/"
+            },
+            {
+                "name": "Ayushman Bharat Pradhan Mantri Jan Arogya Yojana (PM-JAY)",
+                "ministry": "Ministry of Health and Family Welfare",
+                "aim": "Provides a health cover of ₹5 lakh per family for poor and vulnerable families.",
+                "link": "https://pmjay.gov.in/"
+            },
+            {
+                "name": "Pradhan Mantri Kisan Samman Nidhi (PM-KISAN)",
+                "ministry": "Ministry of Agriculture and Farmers Welfare",
+                "aim": "Provides income support to all landholding farmer families.",
+                "link": "https://pmkisan.gov.in/"
+            },
+            {
+                "name": "Swachh Bharat Abhiyan (Urban)",
+                "ministry": "Ministry of Housing and Urban Affairs",
+                "aim": "Achieving universal sanitation coverage and focused attention on cleanliness.",
+                "link": "https://sbm.gov.in/"
+            },
+            {
+                "name": "Atal Pension Yojana (APY)",
+                "ministry": "Ministry of Finance",
+                "aim": "Provides income security to workers in the unorganized sector in old age.",
+                "link": "https://www.npscra.nsdl.co.in/scheme-details.php"
+            },
+             {
+                "name": "Skill India Mission (Pradhan Mantri Kaushal Vikas Yojana)",
+                "ministry": "Ministry of Skill Development and Entrepreneurship",
+                "aim": "Empowering youth through short-term skill training and certification.",
+                "link": "https://www.msde.gov.in/"
+            }
+        ];
+
+
+        // --- 2. Get HTML Elements ---
+        const schemeListDiv = document.getElementById('scheme-list');
+        const schemeCountSpan = document.getElementById('scheme-count');
+        const noResultsP = document.getElementById('no-results');
+        const loadingMessage = document.getElementById('loading-message');
+
+
+        // --- 3. Create Scheme Card HTML ---
+        function createSchemeCard(scheme) {
+            return `
+                <div class="scheme-card">
+                    <h3>${scheme.name}</h3>
+                    <p class="ministry">🏛 ${scheme.ministry}</p>
+                    <p class="aim-summary">🎯 ${scheme.aim}</p>
+                    <a href="${scheme.link}" target="_blank" class="details-link">View Details & Apply »</a>
+                </div>
+            `;
+        }
+
+
+        // --- 4. Display Results ---
+        function displaySchemes(schemes) {
+            schemeListDiv.innerHTML = ''; // Clear previous schemes
+            schemeCountSpan.textContent = schemes.length;
+
+            if (schemes.length === 0) {
+                noResultsP.classList.remove('hidden');
+            } else {
+                noResultsP.classList.add('hidden');
+                
+                              schemes.forEach(scheme => {
+                    const cardHTML = createSchemeCard(scheme);
+                    schemeListDiv.insertAdjacentHTML('beforeend', cardHTML);
+                });
+            }
+        }
+
+
+        // --- 5. Search Logic ---
+        function performSearch() {
+            const query = document.getElementById('scheme-search').value.toLowerCase().trim();
+            
+            const filteredSchemes = allSchemes.filter(scheme => {
+                // Check if the query is included in the scheme name, ministry, OR aim
+                return scheme.name.toLowerCase().includes(query) ||
+                       scheme.ministry.toLowerCase().includes(query) ||
+                       scheme.aim.toLowerCase().includes(query);
+            });
+
+            displaySchemes(filteredSchemes);
+        }
+
+        // --- 6. Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadingMessage.style.display = 'none'; // Hide the loading message
+            performSearch(); // Display all schemes initially
+        });
+    </script>
+</body>
+</html>
